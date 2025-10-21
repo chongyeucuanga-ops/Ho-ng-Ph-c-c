@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Menu NgTuan</title>
+<style>
+  body{font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial; background:#0f1720; color:#e6eef8; margin:0; padding:20px; display:flex;align-items:center;justify-content:center;min-height:100vh}
+  .card{width:100%;max-width:420px;background:rgba(255,255,255,0.03);border-radius:14px;padding:18px;box-shadow:0 6px 18px rgba(0,0,0,0.6)}
+  h1{margin:0 0 10px;font-size:20px}
+  p.small{color:#9fb0c8;margin:0 0 14px}
+  .pw-row{display:flex;gap:8px;margin-bottom:12px}
+  input.pw{flex:1;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.02);color:inherit}
+  button{padding:10px 12px;border-radius:8px;border:none;background:#1f7ed4;color:white;font-weight:600}
+  .menu{display:none;gap:10px;flex-direction:column}
+  .btn{padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.06);background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));cursor:pointer;text-align:left}
+  .btn h3{margin:0;font-size:16px}
+  .btn p{margin:6px 0 0;color:#9fb0c8;font-size:13px}
+  .note{margin-top:12px;color:#9fb0c8;font-size:13px}
+  .ok{background:#16a34a}
+  .hidden{display:none}
+  footer{margin-top:12px;color:#7f9fb8;font-size:12px}
+</style>
+</head>
+<body>
+  <div class="card" role="main">
+    <h1>Menu NgTuan</h1>
+    <p class="small">Nhập mật khẩu để mở menu. Mật khẩu (case-sensitive): <strong>vuongtuan</strong></p>
+
+    <div class="pw-row">
+      <input class="pw" id="pw" type="password" placeholder="Nhập mật khẩu..."/>
+      <button id="go">Mở</button>
+    </div>
+
+    <div id="menu" class="menu">
+      <button class="btn" id="lightAim">
+        <h3>Nhẹ tâm </h3>
+        <p>Mở “di chuyển tâm nhẹ” —  60s.</p>
+      </button>
+
+      <button class="btn" id="steady">
+        <h3>Fix Dung </h3>
+        <p>Bài tập tĩnh tâm: bắn burst, kiểm soát recoil 45s.</p>
+      </button>
+
+      <button class="btn" id="headtrack">
+        <h3>Bám đầu </h3>
+        <p>flick/headshot: mục tiêu nhỏ di chuyển, 60s.</p>
+      </button>
+
+      <div class="note">Các chế độ là **** — can thiệp game.</div>
+    </div>
+
+    <div id="status" class="hidden" style="margin-top:12px"></div>
+    <footer>Gợi ý: Thêm vào Home Screen → Mở để dùng như app.</footer>
+  </div>
+
+<script>
+(function(){
+  const correct = "vuongtuan";
+  const pw = document.getElementById('pw');
+  const go = document.getElementById('go');
+  const menu = document.getElementById('menu');
+  const status = document.getElementById('status');
+
+  go.addEventListener('click', tryPass);
+  pw.addEventListener('keydown', e => { if(e.key==='Enter') tryPass(); });
+
+  function tryPass(){
+    if(pw.value === correct){
+      menu.style.display = 'flex';
+      status.className = 'hidden';
+      pw.value = '';
+      pw.blur();
+    } else {
+      status.className = '';
+      status.textContent = 'Mật khẩu sai — thử lại.';
+      setTimeout(()=> status.className='hidden', 2200);
+    }
+  }
+
+  function startSim(name){
+    const t = 60; // demo seconds
+    const orig = go.textContent;
+    go.textContent = 'Đang chạy...';
+    menu.querySelectorAll('button').forEach(b=>b.disabled=true);
+    status.className='';
+    status.textContent = name + ' — bài tập ' + t + 's. Hãy luyện tập an toàn.';
+    let s = t;
+    const iv = setInterval(()=>{
+      s--;
+      if(s<=0){
+        clearInterval(iv);
+        status.textContent = name + ' đã hoàn thành.';
+        menu.querySelectorAll('button').forEach(b=>b.disabled=false);
+        go.textContent = orig;
+        setTimeout(()=>status.className='hidden',2000);
+      } else {
+        status.textContent = name + ' — còn ' + s + 's';
+      }
+    },1000);
+  }
+
+  document.getElementById('lightAim').addEventListener('click', ()=> startSim('Nhẹ tâm '));
+  document.getElementById('steady').addEventListener('click', ()=> startSim('Fix Dung '));
+  document.getElementById('headtrack').addEventListener('click', ()=> startSim('Bám đầu '));
+})();
+</script>
+</body>
+</html>
